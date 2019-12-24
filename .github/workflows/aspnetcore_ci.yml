@@ -1,0 +1,23 @@
+name: Continuous integration
+
+on: [push]
+
+jobs:
+  build_and_test:
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.0.100
+
+    - name: Build
+      env:
+        DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      run: dotnet build --configuration Release
+
+    - name: Unit tests
+      env:
+        DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      run: dotnet test PiwigoScreenSaver.Tests --configuration Release
