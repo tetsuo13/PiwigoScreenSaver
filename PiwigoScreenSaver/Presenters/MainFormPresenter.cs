@@ -1,4 +1,5 @@
-﻿using PiwigoScreenSaver.Domain;
+﻿using Microsoft.Extensions.Logging;
+using PiwigoScreenSaver.Domain;
 using PiwigoScreenSaver.Models;
 using PiwigoScreenSaver.Views;
 using System;
@@ -12,22 +13,25 @@ namespace PiwigoScreenSaver.Presenters
     public class MainFormPresenter
     {
         public Rectangle BoundingRectangle { get; private set; }
-
         public int Interval { get { return 30000; } }
 
+        private readonly ILogger logger;
+        private readonly AnimationHandler animator;
         private readonly IGalleryService galleryService;
         private readonly IMainFormView mainFormView;
         private readonly Random Rand;
 
-        public MainFormPresenter(IMainFormView mainFormView, IGalleryService galleryService,
-            IEnumerable<Rectangle> allScreensBoundaries)
+        public MainFormPresenter(ILogger logger, IMainFormView mainFormView,
+            IGalleryService galleryService, IEnumerable<Rectangle> allScreensBoundaries)
         {
+            this.logger = logger;
             this.mainFormView = mainFormView;
             Rand = new Random();
 
             BoundingRectangle = FindBoundingBox(allScreensBoundaries);
 
             this.galleryService = galleryService;
+            animator = new AnimationHandler();
         }
 
         /// <summary>
@@ -82,7 +86,11 @@ namespace PiwigoScreenSaver.Presenters
             // an image takes significantly long (slow Internet connection,
             // slow gallery instance, etc.), it'll be shown on screen for a
             // shorter amount of time than the interval is set for, giving the
-            // impression that the interval off.
+            // impression that the interval is off.
+            //
+            // On the other hand, not prefetching runs into the same scenario
+            // if we encounter slowness on the next interval. So prefetching
+            // actually buys us time.
         }
 
         private void ShowImageOnDisplay(int targetPanelIndex, ImageFetchResultModel imageFetchResult)
@@ -109,7 +117,6 @@ namespace PiwigoScreenSaver.Presenters
                     errorLabel.Text = imageFetchResult.ErrorMessage;
                     errorLabel.Location = new Point(Rand.Next(panel.Width / 2),
                         Rand.Next(panel.Height / 2));
-                    errorLabel.Location = new Point(20, 20);
                     errorLabel.MaximumSize = new Size(panel.Width - 100, panel.Height - 100);
                     errorLabel.Visible = true;
                 }
@@ -118,10 +125,15 @@ namespace PiwigoScreenSaver.Presenters
                     errorLabel.Visible = false;
                     pictureBox.Visible = true;
                     pictureBox.BackgroundImage = imageFetchResult.Image;
-                    pictureBox.Width = imageFetchResult.Image.Width;
-                    pictureBox.Height = imageFetchResult.Image.Height;
-                    pictureBox.Location = new Point(Rand.Next(panel.Width - pictureBox.Width),
-                        Rand.Next(panel.Height - pictureBox.Height));
+
+                    animator.SetControl(panel.Size, imageFetchResult.Image.Size, pictureBox);
+
+                    pictureBox.Size = animator.IdealImageSize;
+
+                    logger.LogDebug("Panel size ({0},{1}), original image size ({1},{2}), image resized ({3},{4})",
+                        panel.Size.Width, panel.Size.Height,
+                        imageFetchResult.Image.Width, imageFetchResult.Image.Height,
+                        pictureBox.Size.Width, pictureBox.Size.Height);
                 }
             }
         }

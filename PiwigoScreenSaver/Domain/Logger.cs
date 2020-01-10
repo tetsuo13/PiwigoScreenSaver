@@ -9,10 +9,14 @@ namespace PiwigoScreenSaver.Domain
     /// </summary>
     public class Logger : ILogger
     {
+        public static string EnvName = "PiwigoScreenSaverDebug";
+
         private readonly string logFilePath;
+        private readonly bool enableDebugLevel;
 
         public Logger()
         {
+            enableDebugLevel = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable(EnvName));
             logFilePath = Path.Combine(Path.GetTempPath(), "PiwigoScreenSaver.log");
         }
 
@@ -23,6 +27,10 @@ namespace PiwigoScreenSaver.Domain
 
         public bool IsEnabled(LogLevel logLevel)
         {
+            if (logLevel == LogLevel.Debug || logLevel == LogLevel.Trace)
+            {
+                return enableDebugLevel;
+            }
             return true;
         }
 
@@ -37,7 +45,7 @@ namespace PiwigoScreenSaver.Domain
             }
 
             File.AppendAllText(logFilePath,
-                $"{DateTime.Now.ToString("O")} [{logLevel}] - {eventId.Id} - {message}\n");
+                $"{DateTime.Now.ToString("O")} [{logLevel}] - {message}\n");
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Microsoft.Extensions.Logging;
+using Moq;
 using PiwigoScreenSaver.Domain;
 using PiwigoScreenSaver.Presenters;
 using PiwigoScreenSaver.Tests.Mocks;
@@ -12,6 +13,8 @@ namespace PiwigoScreenSaver.Tests.Presenters
 {
     public class MainFormPresenterTests
     {
+        private readonly Mock<ILogger> MockLogger = new Mock<ILogger>();
+
         private readonly List<Rectangle> MockBoundaries = new List<Rectangle>
         {
             new Rectangle(0, 0, 640, 480)
@@ -29,7 +32,7 @@ namespace PiwigoScreenSaver.Tests.Presenters
         public void SignificantMouseMovement(Point initialPosition, Point currentPosition, bool expected)
         {
             var view = new MockMainFormView();
-            var presenter = new MainFormPresenter(view, null, MockBoundaries);
+            var presenter = new MainFormPresenter(MockLogger.Object, view, null, MockBoundaries);
             Assert.Equal(expected, presenter.SignificantMouseMovement(initialPosition, currentPosition));
         }
 
@@ -41,7 +44,7 @@ namespace PiwigoScreenSaver.Tests.Presenters
             {
                 new Rectangle(0, 0, 3840, 2160)
             };
-            var presenter = new MainFormPresenter(view, null, boundaries);
+            var presenter = new MainFormPresenter(MockLogger.Object, view, null, boundaries);
 
             Assert.Equal(0, presenter.BoundingRectangle.X);
             Assert.Equal(0, presenter.BoundingRectangle.Y);
@@ -55,7 +58,7 @@ namespace PiwigoScreenSaver.Tests.Presenters
             var view = new MockMainFormView();
             var galleryService = new Mock<IGalleryService>();
             galleryService.Setup(x => x.GetRandomImage(It.IsAny<Size>())).Throws<Exception>();
-            var presenter = new MainFormPresenter(view, galleryService.Object, MockBoundaries);
+            var presenter = new MainFormPresenter(MockLogger.Object, view, galleryService.Object, MockBoundaries);
 
             var actual = await presenter.GetImageFromGallery(new Size(320, 240));
 
@@ -69,7 +72,7 @@ namespace PiwigoScreenSaver.Tests.Presenters
         {
             var view = new MockMainFormView();
             var galleryService = new Mock<IGalleryService>();
-            var presenter = new MainFormPresenter(view, galleryService.Object, MockBoundaries);
+            var presenter = new MainFormPresenter(MockLogger.Object, view, galleryService.Object, MockBoundaries);
 
             var actual = await presenter.GetImageFromGallery(new Size(320, 240));
 

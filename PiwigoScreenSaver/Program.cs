@@ -61,7 +61,8 @@ namespace PiwigoScreenSaver
                 var mainForm = new MainForm();
                 var allScreensBoundaries = Screen.AllScreens.Select(x => x.Bounds);
 
-                mainForm.Tag = new MainFormPresenter(mainForm, galleryService, allScreensBoundaries);
+                mainForm.Tag = new MainFormPresenter(logger, mainForm,
+                    galleryService, allScreensBoundaries);
 
                 Application.Run(mainForm);
             }

@@ -39,6 +39,7 @@ namespace PiwigoScreenSaver.Views
 
             Location = new Point(boundingRectangle.X, boundingRectangle.Y);
             Cursor.Hide();
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
 
             // Create a panel for each screen that matches its boundary.
             foreach (var screen in Screen.AllScreens)
@@ -46,6 +47,7 @@ namespace PiwigoScreenSaver.Views
                 // No need to set location and size as it'll change.
                 var pictureBox = new PictureBox
                 {
+                    BackgroundImageLayout = ImageLayout.Stretch,
                     Name = IMainFormView.Components.PictureBox.ToString()
                 };
                 pictureBox.MouseMove += OnMouseMove;
