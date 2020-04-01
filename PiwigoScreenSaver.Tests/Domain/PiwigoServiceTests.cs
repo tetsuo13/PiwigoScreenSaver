@@ -140,6 +140,7 @@ namespace PiwigoScreenSaver.Tests.Domain
             Assert.NotNull(actual.Result.Images.Single().Derivatives);
             Assert.Equal(1656, actual.Result.Images.Single().Derivatives["xxlarge"].Width);
             Assert.Equal(1242, actual.Result.Images.Single().Derivatives["xxlarge"].Height);
+            Assert.Equal("20180218 113956", actual.Result.Images.Single().Name);
         }
 
         [Fact]
@@ -163,6 +164,7 @@ namespace PiwigoScreenSaver.Tests.Domain
             Assert.NotNull(actual.Result.Images.Single().Derivatives);
             Assert.Equal(389, actual.Result.Images.Single().Derivatives["xxlarge"].Width);
             Assert.Equal(800, actual.Result.Images.Single().Derivatives["xxlarge"].Height);
+            Assert.Equal("1568733725341 photo", actual.Result.Images.Single().Name);
         }
 
         [Fact]
@@ -206,6 +208,19 @@ namespace PiwigoScreenSaver.Tests.Domain
             var piwigoService = new PiwigoService(logger.Object, CreateMockSettingsService(), new HttpClient());
 
             Assert.Throws<Exception>(() => piwigoService.FindLargestImageWithinBounds(derivatives, new Size(42, 42)));
+        }
+
+        [Fact]
+        public async Task ImageStreamFromUrl_ThrowsException_ContainsPhotoNameInMessage()
+        {
+            const string imageName = "Rockabye, Sheriff, just you relax.gif";
+            var httpClient = new HttpClient();
+            var logger = new Mock<ILogger>();
+
+            var piwigoService = new PiwigoService(logger.Object, CreateMockSettingsService(), httpClient);
+
+            var e = await Assert.ThrowsAsync<Exception>(async () => await piwigoService.ImageStreamFromUrl(string.Empty, imageName));
+            Assert.Contains(imageName, e.Message);
         }
 
         private HttpClient CreateMockHttpClient(HttpStatusCode statusCode, string json)

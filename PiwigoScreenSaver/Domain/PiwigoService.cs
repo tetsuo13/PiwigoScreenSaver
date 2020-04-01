@@ -78,9 +78,33 @@ namespace PiwigoScreenSaver.Domain
             }
 
             var imageUrl = FindLargestImageWithinBounds(image.Result.Images.Single().Derivatives, boundingSize);
+            return await ImageStreamFromUrl(imageUrl, image.Result.Images.Single().Name);
+        }
 
-            using var stream = await httpClient.GetStreamAsync(imageUrl);
-            return Image.FromStream(stream);
+        /// <summary>
+        /// Encapsulate attempt to fetch the photo since it's possible that it
+        /// doesn't exist. This can happen when the photo is manually deleted
+        /// from the file system without removing it from the database.
+        /// Include the photo's name in the exception message that's shown to
+        /// the user as a way to find the offending photo in the gallery.
+        /// </summary>
+        /// <param name="url">The URL to the photo to download.</param>
+        /// <param name="imageName">The photo's name in the gallery.</param>
+        /// <returns>The image.</returns>
+        /// <exception cref="Exception">
+        /// Thrown if the image at the given URL can't be retrieved.
+        /// </exception>
+        internal async Task<Image> ImageStreamFromUrl(string url, string imageName)
+        {
+            try
+            {
+                using var stream = await httpClient.GetStreamAsync(url);
+                return Image.FromStream(stream);
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"{e.Message} Photo name was '{imageName}'", e);
+            }
         }
 
         private void Initialize()
