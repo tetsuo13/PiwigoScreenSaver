@@ -115,9 +115,16 @@ namespace PiwigoScreenSaver.Presenters
                     pictureBox.Visible = false;
 
                     errorLabel.Text = imageFetchResult.ErrorMessage;
+
+                    // Random location on screen.
                     errorLabel.Location = new Point(Rand.Next(panel.Width / 2),
                         Rand.Next(panel.Height / 2));
-                    errorLabel.MaximumSize = new Size(panel.Width - 100, panel.Height - 100);
+
+                    // Expand height to fill screen to leave room for word
+                    // wrapping in case there's a lot said in the error.
+                    errorLabel.MaximumSize = new Size(panel.Width - errorLabel.Location.X,
+                        panel.Height - errorLabel.Location.Y);
+
                     errorLabel.Visible = true;
                 }
                 else
