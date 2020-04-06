@@ -1,0 +1,16 @@
+# Changelog
+
+## 1.2.0 (2020-04-01)
+
+- Display photo name in error message in case it can't be downloaded
+- Fixed error message not wrapping
+
+## 1.1.0 (2020-01-10)
+
+- Added debug logging
+- Scale photo up to fit to screen
+- Slowly move photo each photo in a random direction
+
+## 1.0.0 (2019-12-24)
+
+- Initial release
