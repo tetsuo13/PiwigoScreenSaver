@@ -103,6 +103,7 @@ namespace PiwigoScreenSaver.Domain
             }
             catch (Exception e)
             {
+                logger.LogWarning("Couldn't download {0}: {1}", imageName, e.Message);
                 throw new Exception($"{e.Message} Photo name was '{imageName}'", e);
             }
         }
@@ -160,19 +161,30 @@ namespace PiwigoScreenSaver.Domain
         private async Task<BaseResult<T>> MakeRequest<T>(string method, HttpMethod httpMethod,
             IDictionary<string, string> formValues = null)
         {
-            using var request = new HttpRequestMessage(httpMethod, "ws.php?format=json&method=" + method);
+            var uri = $"ws.php?format=json&method={method}";
 
-            if (formValues != null)
+            try
             {
-                request.Content = new FormUrlEncodedContent(formValues);
+                using var request = new HttpRequestMessage(httpMethod, uri);
+
+                if (formValues != null)
+                {
+                    request.Content = new FormUrlEncodedContent(formValues);
+                }
+
+                using var response = await httpClient.SendAsync(request);
+
+                response.EnsureSuccessStatusCode();
+                lastJsonResponse = await response.Content.ReadAsStringAsync();
+
+                return MapJson<T>(lastJsonResponse);
             }
-
-            using var response = await httpClient.SendAsync(request);
-
-            response.EnsureSuccessStatusCode();
-            lastJsonResponse = await response.Content.ReadAsStringAsync();
-
-            return MapJson<T>(lastJsonResponse);
+            catch (Exception e)
+            {
+                logger.LogError("Error making {0} request to {1}{2}: {3}",
+                    httpMethod, httpClient.BaseAddress, uri, e.Message);
+                throw;
+            }
         }
 
         internal BaseResult<T> MapJson<T>(string json)

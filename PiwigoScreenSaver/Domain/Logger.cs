@@ -45,7 +45,7 @@ namespace PiwigoScreenSaver.Domain
             }
 
             File.AppendAllText(logFilePath,
-                $"{DateTime.Now.ToString("O")} [{logLevel}] - {message}\n");
+                $"{DateTime.Now:O} [{logLevel}] - {message}\n");
         }
     }
 }
