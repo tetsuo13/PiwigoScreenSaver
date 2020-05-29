@@ -5,20 +5,19 @@ on: [push]
 jobs:
   build_and_test:
     runs-on: windows-latest
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
     steps:
     - uses: actions/checkout@v2
 
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.0.100
+        dotnet-version: 3.1.300
 
     - name: Build
-      env:
-        DOTNET_CLI_TELEMETRY_OPTOUT: 1
       run: dotnet build --configuration Release
 
     - name: Unit tests
-      env:
-        DOTNET_CLI_TELEMETRY_OPTOUT: 1
       run: dotnet test PiwigoScreenSaver.Tests --configuration Release
