@@ -2,7 +2,7 @@
 
 [![Actions Status](https://github.com/tetsuo13/PiwigoScreenSaver/workflows/Continuous%20integration/badge.svg)](https://github.com/tetsuo13/PiwigoScreenSaver/actions)
 
-This is a Windows screen saver which displays random photos from your Piwigo gallery.
+This is a Windows screen saver which displays random photos from your [Piwigo](https://piwigo.org) gallery.
 
 Uses the [Piwigo Web API](https://piwigo.org/doc/doku.php?id=dev:webapi:start) web service available on your Piwigo gallery using the login credentials you provide to display a randomly chosen photo on the screen. The random photo is chosen by the Piwigo API although it doesn't appear to be very random. It will scale the photo up to fit the display and slowly move it around the screen until the next random photo is retrieved.
 
@@ -15,6 +15,10 @@ Please note that this screen saver will download a photo from your Piwigo galler
 3. Move **PiwigoScreenSaver.scr** to **C:\Windows\System32**
 4. Navigate to **C:\Windows\System32**, right-click on **PiwigoScreenSaver.scr**, and click on Install. This will open the **Screen Saver Settings** dialog where you can configure the screen saver.
    - To configure, you will need to supply the URL to your Piwigo gallery and a username and password to log in.
+
+## Upgrade
+
+Follow the first 3 installation steps above.
 
 ## Developer Notes
 

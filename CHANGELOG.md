@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1 (2020-06-02)
+
+- Fixed bug that would prevent screen saver from starting (#2)
+
 ## 1.2.0 (2020-04-01)
 
 - Display photo name in error message in case it can't be downloaded
