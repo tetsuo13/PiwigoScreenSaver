@@ -15,15 +15,27 @@ if (Test-Path $binDir) {
 }
 
 Write-Host "Building $projectFile" -ForegroundColor Magenta
-dotnet publish --runtime win-x64 --configuration Release /p:PublishSingleFile=true .\PiwigoScreenSaver\PiwigoScreenSaver.csproj
+dotnet publish --runtime win-x64 --configuration Release /p:PublishSingleFile=true $projectFile
 Write-Host "Done building." -ForegroundColor Green
 
 $publishDir = "$binDir\netcoreapp3.1\win-x64\publish"
 
 Write-Host "Creating archive in $publishDir..." -ForegroundColor Magenta
 
-Rename-Item -Path $publishDir\PiwigoScreenSaver.exe -NewName PiwigoScreenSaver.scr
+$screenSaverFileName = "PiwigoScreenSaver.scr"
+$downloadFileName = "PiwigoScreenSaver-$versionString.zip"
 
-Compress-Archive -LiteralPath $publishDir\PiwigoScreenSaver.scr -DestinationPath "$publishDir\PiwigoScreenSaver-$versionString.zip"
+Rename-Item -Path $publishDir\PiwigoScreenSaver.exe -NewName $screenSaverFileName
 
-Write-Host "Done."
+Compress-Archive -LiteralPath $publishDir\$screenSaverFileName -DestinationPath $publishDir\$downloadFileName
+
+$filesToFash = @($screenSaverFileName, $downloadFileName)
+
+Write-Host
+Write-Host "Hashes for the release notes:" -ForegroundColor Magenta
+Write-Host "| File | SHA-256 |"
+Write-Host "| ---- | ------- |"
+
+$filesToFash | ForEach-Object {
+    "| " + $_ + " | " + (Get-FileHash $publishDir\$_ -Algorithm SHA256).Hash.ToLower() + " |"
+}
