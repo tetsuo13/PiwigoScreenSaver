@@ -2,7 +2,7 @@
 
 ## 1.2.1 (2020-06-02)
 
-- Fixed bug that would prevent screen saver from starting (#2)
+- Fixed bug that would prevent screen saver from starting ([#2](https://github.com/tetsuo13/PiwigoScreenSaver/issues/2))
 
 ## 1.2.0 (2020-04-01)
 
