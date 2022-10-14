@@ -3,7 +3,6 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <PublishTrimmed>true</PublishTrimmed>
     <UseWindowsForms>true</UseWindowsForms>
     <Authors>Andrei Nicholson</Authors>
     <AssemblyVersion>1.2.1.0</AssemblyVersion>
