@@ -6,11 +6,8 @@ using PiwigoScreenSaver.Views;
 using System;
 using System.Linq;
 using System.Net.Http;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Forms;
-
-[assembly: InternalsVisibleTo("PiwigoScreenSaver.Tests")]
 
 namespace PiwigoScreenSaver
 {
