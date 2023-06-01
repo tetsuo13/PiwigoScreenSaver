@@ -1,5 +1,4 @@
 using PiwigoScreenSaver.Domain;
-using System;
 using Xunit;
 
 namespace PiwigoScreenSaver.Tests.Domain

@@ -3,24 +3,24 @@ using System.Text.Json.Serialization;
 
 namespace PiwigoScreenSaver.Models.Piwigo
 {
-    public class SessionStatus
+    public record SessionStatus
     {
-        public string Username { get; set; }
-        public string Status { get; set; }
-        public string Theme { get; set; }
-        public string Language { get; set; }
+        public string Username { get; init; }
+        public string Status { get; init; }
+        public string Theme { get; init; }
+        public string Language { get; init; }
 
         [JsonPropertyName("pwg_token")]
-        public string Token { get; set; }
+        public string Token { get; init; }
 
-        public string Charset { get; set; }
+        public string Charset { get; init; }
 
         [JsonPropertyName("current_datetime")]
-        public DateTime CurrentDateTime { get; set; }
+        public DateTime CurrentDateTime { get; init; }
 
-        public string Version { get; set; }
+        public string Version { get; init; }
 
         [JsonPropertyName("available_sizes")]
-        public string[] AvailableSizes { get; set; }
+        public string[] AvailableSizes { get; init; }
     }
 }

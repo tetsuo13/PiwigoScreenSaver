@@ -9,15 +9,15 @@ namespace PiwigoScreenSaver.Domain
     /// </summary>
     public class Logger : ILogger
     {
-        public static string EnvName = "PiwigoScreenSaverDebug";
+        public const string EnvName = "PiwigoScreenSaverDebug";
 
-        private readonly string logFilePath;
-        private readonly bool enableDebugLevel;
+        private readonly string _logFilePath;
+        private readonly bool _enableDebugLevel;
 
         public Logger()
         {
-            enableDebugLevel = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable(EnvName));
-            logFilePath = Path.Combine(Path.GetTempPath(), "PiwigoScreenSaver.log");
+            _enableDebugLevel = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable(EnvName));
+            _logFilePath = Path.Combine(Path.GetTempPath(), "PiwigoScreenSaver.log");
         }
 
         public IDisposable BeginScope<TState>(TState state)
@@ -29,7 +29,7 @@ namespace PiwigoScreenSaver.Domain
         {
             if (logLevel == LogLevel.Debug || logLevel == LogLevel.Trace)
             {
-                return enableDebugLevel;
+                return _enableDebugLevel;
             }
             return true;
         }
@@ -44,7 +44,7 @@ namespace PiwigoScreenSaver.Domain
                 message += formatter(state, exception);
             }
 
-            File.AppendAllText(logFilePath,
+            File.AppendAllText(_logFilePath,
                 $"{DateTime.Now:O} [{logLevel}] - {message}\n");
         }
     }

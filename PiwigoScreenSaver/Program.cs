@@ -6,11 +6,8 @@ using PiwigoScreenSaver.Views;
 using System;
 using System.Linq;
 using System.Net.Http;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Forms;
-
-[assembly: InternalsVisibleTo("PiwigoScreenSaver.Tests")]
 
 namespace PiwigoScreenSaver
 {
@@ -80,7 +77,7 @@ namespace PiwigoScreenSaver
 
         private static void DisplayExceptionMessage(string error)
         {
-            logger.LogError($"Unexpected program error: {error}");
+            logger.LogError("Unexpected program error: {errorMessage}", error);
             var message = $"Something has gone seriously wrong:\n{error}";
             MessageBox.Show(message, "Unexpected error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             Application.Exit();

@@ -17,10 +17,10 @@ namespace PiwigoScreenSaver.Domain
     {
         private string lastJsonResponse;
 
-        private readonly ILogger logger;
-        private readonly ISettingsService settingsService;
-        private readonly HttpClient httpClient;
-        private readonly JsonSerializerOptions jsonOptions;
+        private readonly ILogger _logger;
+        private readonly ISettingsService _settingsService;
+        private readonly HttpClient _httpClient;
+        private readonly JsonSerializerOptions _jsonOptions;
 
         private readonly string[] derivativeSizes = new string[]
         {
@@ -37,22 +37,22 @@ namespace PiwigoScreenSaver.Domain
 
         public PiwigoService(ILogger logger, ISettingsService settingsService, HttpClient httpClient)
         {
-            this.logger = logger;
-            this.settingsService = settingsService;
-            this.httpClient = httpClient;
-            this.settingsService = settingsService;
+            _logger = logger;
+            _settingsService = settingsService;
+            this._httpClient = httpClient;
+            _settingsService = settingsService;
 
-            jsonOptions = new JsonSerializerOptions
+            _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             };
 
             // All dates are in "yyyy-MM-dd HH:mm:ss" format.
-            jsonOptions.Converters.Add(new DateTimeConverterUsingDateTimeParse());
+            _jsonOptions.Converters.Add(new DateTimeConverterUsingDateTimeParse());
 
             // Use an enum for the "stat" property. We want the json value
             // deserialized to the enum name, not the enum value.
-            jsonOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+            _jsonOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
         }
 
         public async Task<Image> GetRandomImage(Size boundingSize)
@@ -68,8 +68,8 @@ namespace PiwigoScreenSaver.Domain
 
             if (image.Status != StatusCode.OK)
             {
-                logger.LogError("Unexpected status encountered from pwg.categories.getImages");
-                logger.LogDebug(lastJsonResponse);
+                _logger.LogError("Unexpected status encountered from pwg.categories.getImages");
+                _logger.LogDebug(lastJsonResponse);
                 throw new Exception($"Error getting image: {image.ErrorMessage}");
             }
             else if (image.Result.Paging.Count != 1)
@@ -98,12 +98,12 @@ namespace PiwigoScreenSaver.Domain
         {
             try
             {
-                using var stream = await httpClient.GetStreamAsync(url);
+                using var stream = await _httpClient.GetStreamAsync(url);
                 return Image.FromStream(stream);
             }
             catch (Exception e)
             {
-                logger.LogWarning("Couldn't download {0}: {1}", imageName, e.Message);
+                _logger.LogWarning("Couldn't download {0}: {1}", imageName, e.Message);
                 throw new Exception($"{e.Message} Photo name was '{imageName}'", e);
             }
         }
@@ -111,15 +111,15 @@ namespace PiwigoScreenSaver.Domain
         private void Initialize()
         {
             // Only want to perform this once.
-            if (httpClient.BaseAddress != null)
+            if (_httpClient.BaseAddress != null)
             {
                 return;
             }
 
-            httpClient.BaseAddress = new Uri(settingsService.Get(SettingKey.Url));
+            _httpClient.BaseAddress = new Uri(_settingsService.Get(SettingKey.Url));
 
             var version = GetType().Assembly.GetName().Version.ToString();
-            httpClient.DefaultRequestHeaders.Add("User-Agent", $"Piwigo Screen Saver/{version}");
+            _httpClient.DefaultRequestHeaders.Add("User-Agent", $"Piwigo Screen Saver/{version}");
         }
 
         internal string FindLargestImageWithinBounds(IDictionary<string, Derivative> derivatives, Size boundingSize)
@@ -146,8 +146,8 @@ namespace PiwigoScreenSaver.Domain
         {
             var nvc = new Dictionary<string, string>
             {
-                { "username", settingsService.Get(SettingKey.Username) },
-                { "password", settingsService.Get(SettingKey.Password) }
+                { "username", _settingsService.Get(SettingKey.Username) },
+                { "password", _settingsService.Get(SettingKey.Password) }
             };
 
             var loginResult = await MakeRequest<bool>("pwg.session.login", HttpMethod.Post, nvc);
@@ -172,7 +172,7 @@ namespace PiwigoScreenSaver.Domain
                     request.Content = new FormUrlEncodedContent(formValues);
                 }
 
-                using var response = await httpClient.SendAsync(request);
+                using var response = await _httpClient.SendAsync(request);
 
                 response.EnsureSuccessStatusCode();
                 lastJsonResponse = await response.Content.ReadAsStringAsync();
@@ -181,15 +181,15 @@ namespace PiwigoScreenSaver.Domain
             }
             catch (Exception e)
             {
-                logger.LogError("Error making {0} request to {1}{2}: {3}",
-                    httpMethod, httpClient.BaseAddress, uri, e.Message);
+                _logger.LogError("Error making {0} request to {1}{2}: {3}",
+                    httpMethod, _httpClient.BaseAddress, uri, e.Message);
                 throw;
             }
         }
 
         internal BaseResult<T> MapJson<T>(string json)
         {
-            return JsonSerializer.Deserialize<BaseResult<T>>(json, jsonOptions);
+            return JsonSerializer.Deserialize<BaseResult<T>>(json, _jsonOptions);
         }
     }
 }

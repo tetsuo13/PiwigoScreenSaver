@@ -3,7 +3,6 @@ using PiwigoScreenSaver.Domain;
 using PiwigoScreenSaver.Models;
 using PiwigoScreenSaver.Presenters;
 using PiwigoScreenSaver.Tests.Mocks;
-using System;
 using Xunit;
 
 namespace PiwigoScreenSaver.Tests.Presenters

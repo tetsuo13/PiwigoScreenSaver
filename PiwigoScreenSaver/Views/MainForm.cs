@@ -12,13 +12,13 @@ namespace PiwigoScreenSaver.Views
 
         private Timer panelTimer;
 
-        private readonly Point initialMousePosition;
+        private readonly Point _initialMousePosition;
 
         public MainForm()
         {
             InitializeComponent();
 
-            initialMousePosition = MousePosition;
+            _initialMousePosition = MousePosition;
 
             Load += OnLoad;
         }
@@ -30,7 +30,7 @@ namespace PiwigoScreenSaver.Views
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnLoad(object sender, EventArgs e)
+        private void OnLoad(object? sender, EventArgs e)
         {
             var boundingRectangle = ((MainFormPresenter)Tag).BoundingRectangle;
 
@@ -102,9 +102,9 @@ namespace PiwigoScreenSaver.Views
             ExitApplication();
         }
 
-        private void OnMouseMove(object sender, EventArgs e)
+        private void OnMouseMove(object? sender, EventArgs e)
         {
-            if (((MainFormPresenter)Tag).SignificantMouseMovement(initialMousePosition, MousePosition))
+            if (((MainFormPresenter)Tag).SignificantMouseMovement(_initialMousePosition, MousePosition))
             {
                 ExitApplication();
             }
@@ -112,10 +112,7 @@ namespace PiwigoScreenSaver.Views
 
         private void ExitApplication()
         {
-            if (galleryPictureBox != null)
-            {
-                galleryPictureBox.Dispose();
-            }
+            galleryPictureBox?.Dispose();
             Application.Exit();
         }
     }

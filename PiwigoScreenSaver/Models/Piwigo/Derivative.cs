@@ -3,14 +3,14 @@ using System.Text.Json.Serialization;
 
 namespace PiwigoScreenSaver.Models.Piwigo
 {
-    public class Derivative
+    public record Derivative
     {
-        public string Url { get; set; }
+        public string Url { get; init; }
 
         [JsonConverter(typeof(NumberDuckTypeConverter))]
-        public int Width { get; set; }
+        public int Width { get; init; }
 
         [JsonConverter(typeof(NumberDuckTypeConverter))]
-        public int Height { get; set; }
+        public int Height { get; init; }
     }
 }

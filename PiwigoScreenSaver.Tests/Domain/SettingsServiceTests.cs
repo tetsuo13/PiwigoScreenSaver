@@ -2,7 +2,6 @@
 using Moq;
 using PiwigoScreenSaver.Domain;
 using PiwigoScreenSaver.Models;
-using System;
 using Xunit;
 
 namespace PiwigoScreenSaver.Tests.Domain

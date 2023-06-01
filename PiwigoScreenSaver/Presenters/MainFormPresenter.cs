@@ -15,23 +15,23 @@ namespace PiwigoScreenSaver.Presenters
         public Rectangle BoundingRectangle { get; private set; }
         public int Interval { get { return 30000; } }
 
-        private readonly ILogger logger;
-        private readonly AnimationHandler animator;
-        private readonly IGalleryService galleryService;
-        private readonly IMainFormView mainFormView;
-        private readonly Random Rand;
+        private readonly ILogger _logger;
+        private readonly AnimationHandler _animator;
+        private readonly IGalleryService _galleryService;
+        private readonly IMainFormView _mainFormView;
+        private readonly Random _rand;
 
         public MainFormPresenter(ILogger logger, IMainFormView mainFormView,
             IGalleryService galleryService, IEnumerable<Rectangle> allScreensBoundaries)
         {
-            this.logger = logger;
-            this.mainFormView = mainFormView;
-            Rand = new Random();
+            _logger = logger;
+            _mainFormView = mainFormView;
+            _rand = new Random();
 
             BoundingRectangle = FindBoundingBox(allScreensBoundaries);
 
-            this.galleryService = galleryService;
-            animator = new AnimationHandler();
+            _galleryService = galleryService;
+            _animator = new AnimationHandler();
         }
 
         /// <summary>
@@ -68,9 +68,9 @@ namespace PiwigoScreenSaver.Presenters
         public void Tick(object sender, EventArgs e)
         {
             // Choose a random display to paint the photo onto.
-            var targetIndex = Rand.Next(mainFormView.DisplayPanels.Count);
+            var targetIndex = _rand.Next(_mainFormView.DisplayPanels.Count);
 
-            var targetPanel = mainFormView.DisplayPanels[targetIndex];
+            var targetPanel = _mainFormView.DisplayPanels[targetIndex];
 
             // Blocking, but OK here.
             var imageFetchResult = Task.Run(async () =>
@@ -95,9 +95,9 @@ namespace PiwigoScreenSaver.Presenters
 
         private void ShowImageOnDisplay(int targetPanelIndex, ImageFetchResultModel imageFetchResult)
         {
-            for (var i = 0; i < mainFormView.DisplayPanels.Count; i++)
+            for (var i = 0; i < _mainFormView.DisplayPanels.Count; i++)
             {
-                var panel = mainFormView.DisplayPanels[i];
+                var panel = _mainFormView.DisplayPanels[i];
                 var pictureBox = panel.Controls[IMainFormView.Components.PictureBox.ToString()];
                 var errorLabel = panel.Controls[IMainFormView.Components.ErrorLabel.ToString()];
 
@@ -117,8 +117,8 @@ namespace PiwigoScreenSaver.Presenters
                     errorLabel.Text = imageFetchResult.ErrorMessage;
 
                     // Random location on screen.
-                    errorLabel.Location = new Point(Rand.Next(panel.Width / 2),
-                        Rand.Next(panel.Height / 2));
+                    errorLabel.Location = new Point(_rand.Next(panel.Width / 2),
+                        _rand.Next(panel.Height / 2));
 
                     // Expand height to fill screen to leave room for word
                     // wrapping in case there's a lot said in the error.
@@ -133,11 +133,11 @@ namespace PiwigoScreenSaver.Presenters
                     pictureBox.Visible = true;
                     pictureBox.BackgroundImage = imageFetchResult.Image;
 
-                    animator.SetControl(panel.Size, imageFetchResult.Image.Size, pictureBox);
+                    _animator.SetControl(panel.Size, imageFetchResult.Image.Size, pictureBox);
 
-                    pictureBox.Size = animator.IdealImageSize;
+                    pictureBox.Size = _animator.IdealImageSize;
 
-                    logger.LogDebug("Panel size ({0},{1}), original image size ({1},{2}), image resized ({3},{4})",
+                    _logger.LogDebug("Panel size ({0},{1}), original image size ({1},{2}), image resized ({3},{4})",
                         panel.Size.Width, panel.Size.Height,
                         imageFetchResult.Image.Width, imageFetchResult.Image.Height,
                         pictureBox.Size.Width, pictureBox.Size.Height);
@@ -151,7 +151,7 @@ namespace PiwigoScreenSaver.Presenters
 
             try
             {
-                result.Image = await galleryService.GetRandomImage(boundingSize);
+                result.Image = await _galleryService.GetRandomImage(boundingSize);
             }
             catch (Exception ex)
             {

@@ -33,7 +33,6 @@ namespace PiwigoScreenSaver.Domain
         /// <exception cref="ArgumentException"></exception>
         public Mode GetMode(string[] args)
         {
-            //return Mode.FullScreen;
             if (args == null || args.Length == 0)
             {
                 return Mode.Configuration;
@@ -47,7 +46,7 @@ namespace PiwigoScreenSaver.Domain
             if (firstArgument.Length > 2)
             {
                 secondArgument = firstArgument.Substring(3).Trim();
-                firstArgument = firstArgument.Substring(0, 2);
+                firstArgument = firstArgument[..2];
             }
             else if (args.Length > 1)
             {

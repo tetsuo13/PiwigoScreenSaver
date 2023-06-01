@@ -1,5 +1,4 @@
 ﻿using PiwigoScreenSaver.Domain.JsonConverters;
-using System;
 using System.Text.Json;
 using Xunit;
 
