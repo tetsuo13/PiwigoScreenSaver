@@ -1,11 +1,10 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace PiwigoScreenSaver.Domain
+namespace PiwigoScreenSaver.Domain;
+
+public interface IAnimator
 {
-    public interface IAnimator
-    {
-        void SetControl(Size windowSize, Size imageSize, Control control);
-        void Animate();
-    }
+    void SetControl(Size windowSize, Size imageSize, Control control);
+    void Animate();
 }

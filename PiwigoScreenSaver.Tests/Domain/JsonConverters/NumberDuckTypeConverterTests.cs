@@ -2,21 +2,20 @@
 using System.Text.Json;
 using Xunit;
 
-namespace PiwigoScreenSaver.Tests.Domain.JsonConverters
+namespace PiwigoScreenSaver.Tests.Domain.JsonConverters;
+
+public class NumberDuckTypeConverterTests
 {
-    public class NumberDuckTypeConverterTests
+    [Fact]
+    public void Deserialize()
     {
-        [Fact]
-        public void Deserialize()
-        {
-            var options = new JsonSerializerOptions();
-            options.Converters.Add(new NumberDuckTypeConverter());
+        var options = new JsonSerializerOptions();
+        options.Converters.Add(new NumberDuckTypeConverter());
 
-            int actual = JsonSerializer.Deserialize<int>("1", options);
-            Assert.Equal(1, actual);
+        int actual = JsonSerializer.Deserialize<int>("1", options);
+        Assert.Equal(1, actual);
 
-            actual = JsonSerializer.Deserialize<int>(@"""1""", options);
-            Assert.Equal(1, actual);
-        }
+        actual = JsonSerializer.Deserialize<int>(@"""1""", options);
+        Assert.Equal(1, actual);
     }
 }

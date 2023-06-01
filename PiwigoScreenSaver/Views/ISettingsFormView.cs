@@ -1,9 +1,8 @@
-﻿namespace PiwigoScreenSaver.Views
+﻿namespace PiwigoScreenSaver.Views;
+
+public interface ISettingsFormView
 {
-    public interface ISettingsFormView
-    {
-        string Url { get; set; }
-        string Username { get; set; }
-        string Password { get; set; }
-    }
+    string Url { get; set; }
+    string Username { get; set; }
+    string Password { get; set; }
 }

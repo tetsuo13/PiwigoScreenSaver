@@ -1,11 +1,10 @@
 ﻿using System.Drawing;
 
-namespace PiwigoScreenSaver.Models
+namespace PiwigoScreenSaver.Models;
+
+public class ImageFetchResultModel
 {
-    public class ImageFetchResultModel
-    {
-        public bool HadError { get; set; }
-        public string ErrorMessage { get; set; }
-        public Image Image { get; set; }
-    }
+    public bool HadError { get; set; }
+    public string ErrorMessage { get; set; }
+    public Image Image { get; set; }
 }

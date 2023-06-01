@@ -1,8 +1,7 @@
-﻿namespace PiwigoScreenSaver.Domain
+﻿namespace PiwigoScreenSaver.Domain;
+
+public interface ISettingsRepository
 {
-    public interface ISettingsRepository
-    {
-        string GetValue(string name);
-        void SetValue(string name, string value);
-    }
+    string GetValue(string name);
+    void SetValue(string name, string value);
 }
