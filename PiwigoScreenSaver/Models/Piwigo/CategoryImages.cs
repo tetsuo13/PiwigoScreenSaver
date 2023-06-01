@@ -2,9 +2,9 @@
 
 namespace PiwigoScreenSaver.Models.Piwigo
 {
-    public class CategoryImages
+    public record CategoryImages
     {
-        public Paging Paging { get; set; }
-        public IEnumerable<GalleryImage> Images { get; set; }
+        public Paging Paging { get; init; }
+        public IEnumerable<GalleryImage> Images { get; init; }
     }
 }

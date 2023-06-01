@@ -4,14 +4,8 @@ using Moq.Protected;
 using PiwigoScreenSaver.Domain;
 using PiwigoScreenSaver.Models;
 using PiwigoScreenSaver.Models.Piwigo;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace PiwigoScreenSaver.Tests.Domain
@@ -65,7 +59,7 @@ namespace PiwigoScreenSaver.Tests.Domain
             var logger = new Mock<ILogger>();
             var piwigoService = new PiwigoService(logger.Object, CreateMockSettingsService(), httpClient);
 
-            await Assert.ThrowsAsync<Exception>(() => piwigoService.Authenticate());
+            await Assert.ThrowsAsync<Exception>(piwigoService.Authenticate);
         }
 
         [Fact]

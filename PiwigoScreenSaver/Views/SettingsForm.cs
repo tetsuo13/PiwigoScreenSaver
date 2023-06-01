@@ -32,7 +32,7 @@ namespace PiwigoScreenSaver.Views
             buttonOk.Click += new EventHandler(OnButtonOkClick);
         }
 
-        private void OnLoad(object sender, EventArgs e)
+        private void OnLoad(object? sender, EventArgs e)
         {
             ((SettingsFormPresenter)Tag).Initialize();
         }
@@ -43,7 +43,7 @@ namespace PiwigoScreenSaver.Views
             DialogResult = DialogResult.Cancel;
         }
 
-        private void OnButtonOkClick(object sender, EventArgs e)
+        private void OnButtonOkClick(object? sender, EventArgs e)
         {
             var valid = ((SettingsFormPresenter)Tag).ValidateSettings();
 

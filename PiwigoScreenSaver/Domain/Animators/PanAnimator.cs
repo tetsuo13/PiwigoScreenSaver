@@ -6,15 +6,15 @@ namespace PiwigoScreenSaver.Domain.Animators
 {
     public class PanAnimator : IAnimator
     {
-        private Control control;
+        private Control? control;
         private int moveX;
         private int moveY;
 
-        private readonly Random rand;
+        private readonly Random _rand;
 
         public PanAnimator()
         {
-            rand = new Random();
+            _rand = new Random();
         }
 
         public void SetControl(Size windowSize, Size imageSize, Control control)
@@ -31,15 +31,15 @@ namespace PiwigoScreenSaver.Domain.Animators
             var maxStepX = imageSize.Height > imageSize.Width ? 1 : 3;
             var maxStepY = imageSize.Height < imageSize.Width ? 1 : 3;
 
-            moveX = rand.Next(-maxStepX, maxStepX);
-            moveY = rand.Next(-maxStepY, maxStepY);
+            moveX = _rand.Next(-maxStepX, maxStepX);
+            moveY = _rand.Next(-maxStepY, maxStepY);
         }
 
         public void Animate()
         {
             if (control == null)
             {
-                throw new NullReferenceException("Missing call to SetControl() first");
+                throw new InvalidOperationException("Missing call to SetControl() first");
             }
 
             control.Top += moveY;

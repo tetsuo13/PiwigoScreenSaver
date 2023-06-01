@@ -3,10 +3,7 @@ using Moq;
 using PiwigoScreenSaver.Domain;
 using PiwigoScreenSaver.Presenters;
 using PiwigoScreenSaver.Tests.Mocks;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace PiwigoScreenSaver.Tests.Presenters

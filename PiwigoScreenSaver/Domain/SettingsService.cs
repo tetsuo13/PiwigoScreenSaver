@@ -6,29 +6,29 @@ namespace PiwigoScreenSaver.Domain
 {
     public class SettingsService : ISettingsService
     {
-        private readonly IMemoryCache cache;
-        private readonly ISettingsRepository repository;
+        private readonly IMemoryCache _cache;
+        private readonly ISettingsRepository _repository;
 
         public SettingsService(IMemoryCache cache, ISettingsRepository repository)
         {
-            this.cache = cache;
-            this.repository = repository;
+            _cache = cache;
+            _repository = repository;
         }
 
         public void Save(SettingKey key, string value)
         {
-            repository.SetValue(key.ToString(), value);
-            cache.Set(key.ToString(), value);
+            _repository.SetValue(key.ToString(), value);
+            _cache.Set(key.ToString(), value);
         }
 
         public string Get(SettingKey key)
         {
-            if (!cache.TryGetValue(key.ToString(), out string value))
+            if (!_cache.TryGetValue(key.ToString(), out string value))
             {
-                if (repository.GetValue(key.ToString()) is string valueFromRepo)
+                if (_repository.GetValue(key.ToString()) is string valueFromRepo)
                 {
                     value = valueFromRepo;
-                    cache.Set(key.ToString(), value);
+                    _cache.Set(key.ToString(), value);
                 }
                 else
                 {

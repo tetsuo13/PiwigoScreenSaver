@@ -6,22 +6,22 @@ namespace PiwigoScreenSaver.Presenters
 {
     public class SettingsFormPresenter
     {
-        private readonly ISettingsService settingsService;
-        private readonly ISettingsFormView settingsFormView;
+        private readonly ISettingsService _settingsService;
+        private readonly ISettingsFormView _settingsFormView;
 
         public SettingsFormPresenter(ISettingsFormView settingsFormView, ISettingsService settingsService)
         {
-            this.settingsFormView = settingsFormView;
-            this.settingsService = settingsService;
+            _settingsFormView = settingsFormView;
+            _settingsService = settingsService;
         }
 
         public void Initialize()
         {
             try
             {
-                settingsFormView.Url = settingsService.Get(SettingKey.Url);
-                settingsFormView.Username = settingsService.Get(SettingKey.Username);
-                settingsFormView.Password = settingsService.Get(SettingKey.Password);
+                _settingsFormView.Url = _settingsService.Get(SettingKey.Url);
+                _settingsFormView.Username = _settingsService.Get(SettingKey.Username);
+                _settingsFormView.Password = _settingsService.Get(SettingKey.Password);
             }
             catch
             {
@@ -30,15 +30,15 @@ namespace PiwigoScreenSaver.Presenters
 
         public bool ValidateSettings()
         {
-            return settingsService.ValidateSettings(settingsFormView.Url,
-                settingsFormView.Username, settingsFormView.Password);
+            return _settingsService.ValidateSettings(_settingsFormView.Url,
+                _settingsFormView.Username, _settingsFormView.Password);
         }
 
         public void SaveSettings()
         {
-            settingsService.Save(SettingKey.Url, settingsFormView.Url);
-            settingsService.Save(SettingKey.Username, settingsFormView.Username);
-            settingsService.Save(SettingKey.Password, settingsFormView.Password);
+            _settingsService.Save(SettingKey.Url, _settingsFormView.Url);
+            _settingsService.Save(SettingKey.Username, _settingsFormView.Username);
+            _settingsService.Save(SettingKey.Password, _settingsFormView.Password);
         }
     }
 }

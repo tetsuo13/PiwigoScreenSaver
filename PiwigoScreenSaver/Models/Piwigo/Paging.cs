@@ -2,16 +2,16 @@
 
 namespace PiwigoScreenSaver.Models.Piwigo
 {
-    public class Paging
+    public record Paging
     {
-        public int Page { get; set; }
+        public int Page { get; init; }
 
         [JsonPropertyName("per_page")]
-        public int PerPage { get; set; }
+        public int PerPage { get; init; }
 
-        public int Count { get; set; }
+        public int Count { get; init; }
 
         [JsonPropertyName("total_count")]
-        public string TotalCount { get; set; }
+        public string TotalCount { get; init; }
     }
 }

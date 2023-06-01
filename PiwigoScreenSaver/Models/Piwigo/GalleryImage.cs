@@ -2,9 +2,9 @@
 
 namespace PiwigoScreenSaver.Models.Piwigo
 {
-    public class GalleryImage
+    public record GalleryImage
     {
-        public string Name { get; set; }
-        public IDictionary<string, Derivative> Derivatives { get; set; }
+        public string Name { get; init; }
+        public IDictionary<string, Derivative> Derivatives { get; init; }
     }
 }

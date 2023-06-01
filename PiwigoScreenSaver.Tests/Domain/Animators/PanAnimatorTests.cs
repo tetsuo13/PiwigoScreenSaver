@@ -1,5 +1,4 @@
 ﻿using PiwigoScreenSaver.Domain.Animators;
-using System;
 using Xunit;
 
 namespace PiwigoScreenSaver.Tests.Domain.Animators
@@ -10,7 +9,7 @@ namespace PiwigoScreenSaver.Tests.Domain.Animators
         public void ThrowsException_Without_SetControl()
         {
             var animator = new PanAnimator();
-            Assert.Throws<NullReferenceException>(() => animator.Animate());
+            Assert.Throws<InvalidOperationException>(animator.Animate);
         }
     }
 }

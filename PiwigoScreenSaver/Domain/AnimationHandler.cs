@@ -9,13 +9,11 @@ namespace PiwigoScreenSaver.Domain
     {
         public Size IdealImageSize { get; private set; }
 
-        private IAnimator animator;
-
-        private readonly Timer timer;
+        private IAnimator? animator;
 
         public AnimationHandler()
         {
-            timer = new Timer
+            var timer = new Timer
             {
                 Interval = 200
             };
@@ -23,7 +21,7 @@ namespace PiwigoScreenSaver.Domain
             timer.Start();
         }
 
-        private void Tick(object sender, EventArgs e)
+        private void Tick(object? sender, EventArgs e)
         {
             if (animator == null)
             {
