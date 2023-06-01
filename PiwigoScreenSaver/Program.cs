@@ -9,78 +9,77 @@ using System.Net.Http;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace PiwigoScreenSaver
+namespace PiwigoScreenSaver;
+
+public static class Program
 {
-    public static class Program
+    private static ILogger logger;
+
+    /// <summary>
+    /// The main entry point for the application.
+    /// </summary>
+    /// <param name="args"></param>
+    [STAThread]
+    public static void Main(string[] args)
     {
-        private static ILogger logger;
+        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+        Application.ThreadException += Application_ThreadException;
+        AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+        Application.SetHighDpiMode(HighDpiMode.SystemAware);
+        Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
 
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        /// <param name="args"></param>
-        [STAThread]
-        public static void Main(string[] args)
+        logger = new Logger();
+
+        var modeManager = new ModeManager();
+        var mode = modeManager.GetMode(args);
+
+        var settingsService = new SettingsService(new MemoryCache(new MemoryCacheOptions()),
+            new RegistryRepository());
+
+        if (mode == ModeManager.Mode.Configuration)
         {
-            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-            Application.ThreadException += Application_ThreadException;
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            Application.SetHighDpiMode(HighDpiMode.SystemAware);
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            var settingsForm = new SettingsForm();
 
-            logger = new Logger();
+            settingsForm.Tag = new SettingsFormPresenter(settingsForm, settingsService);
 
-            var modeManager = new ModeManager();
-            var mode = modeManager.GetMode(args);
-
-            var settingsService = new SettingsService(new MemoryCache(new MemoryCacheOptions()),
-                new RegistryRepository());
-
-            if (mode == ModeManager.Mode.Configuration)
-            {
-                var settingsForm = new SettingsForm();
-
-                settingsForm.Tag = new SettingsFormPresenter(settingsForm, settingsService);
-
-                Application.Run(settingsForm);
-            }
-            else if (mode == ModeManager.Mode.Preview)
-            {
-                // No preview mode implemented. Maybe we could use the demo
-                // site at https://piwigo.org/demo/ and show photos from there?
-                Application.Exit();
-            }
-            else
-            {
-                var galleryService = new PiwigoService(logger, settingsService, new HttpClient());
-
-                var mainForm = new MainForm();
-                var allScreensBoundaries = Screen.AllScreens.Select(x => x.Bounds);
-
-                mainForm.Tag = new MainFormPresenter(logger, mainForm,
-                    galleryService, allScreensBoundaries);
-
-                Application.Run(mainForm);
-            }
+            Application.Run(settingsForm);
         }
-
-        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        else if (mode == ModeManager.Mode.Preview)
         {
-            DisplayExceptionMessage(((Exception)e.ExceptionObject).Message);
-        }
-
-        private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
-        {
-            DisplayExceptionMessage(e.Exception.Message);
-        }
-
-        private static void DisplayExceptionMessage(string error)
-        {
-            logger.LogError("Unexpected program error: {errorMessage}", error);
-            var message = $"Something has gone seriously wrong:\n{error}";
-            MessageBox.Show(message, "Unexpected error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            // No preview mode implemented. Maybe we could use the demo
+            // site at https://piwigo.org/demo/ and show photos from there?
             Application.Exit();
         }
+        else
+        {
+            var galleryService = new PiwigoService(logger, settingsService, new HttpClient());
+
+            var mainForm = new MainForm();
+            var allScreensBoundaries = Screen.AllScreens.Select(x => x.Bounds);
+
+            mainForm.Tag = new MainFormPresenter(logger, mainForm,
+                galleryService, allScreensBoundaries);
+
+            Application.Run(mainForm);
+        }
+    }
+
+    private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+    {
+        DisplayExceptionMessage(((Exception)e.ExceptionObject).Message);
+    }
+
+    private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
+    {
+        DisplayExceptionMessage(e.Exception.Message);
+    }
+
+    private static void DisplayExceptionMessage(string error)
+    {
+        logger.LogError("Unexpected program error: {errorMessage}", error);
+        var message = $"Something has gone seriously wrong:\n{error}";
+        MessageBox.Show(message, "Unexpected error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        Application.Exit();
     }
 }

@@ -1,8 +1,7 @@
-﻿namespace PiwigoScreenSaver.Models.Piwigo
+﻿namespace PiwigoScreenSaver.Models.Piwigo;
+
+public enum StatusCode
 {
-    public enum StatusCode
-    {
-        OK,
-        Fail
-    }
+    OK,
+    Fail
 }

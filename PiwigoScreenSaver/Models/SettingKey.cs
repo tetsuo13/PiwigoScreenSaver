@@ -1,9 +1,8 @@
-﻿namespace PiwigoScreenSaver.Models
+﻿namespace PiwigoScreenSaver.Models;
+
+public enum SettingKey
 {
-    public enum SettingKey
-    {
-        Url,
-        Username,
-        Password
-    }
+    Url,
+    Username,
+    Password
 }

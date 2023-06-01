@@ -1,10 +1,9 @@
 ﻿using System.Drawing;
 using System.Threading.Tasks;
 
-namespace PiwigoScreenSaver.Domain
+namespace PiwigoScreenSaver.Domain;
+
+public interface IGalleryService
 {
-    public interface IGalleryService
-    {
-        Task<Image> GetRandomImage(Size boundingSize);
-    }
+    Task<Image> GetRandomImage(Size boundingSize);
 }
