@@ -4,7 +4,7 @@
 
 This is a Windows screen saver which displays random photos from your [Piwigo](https://piwigo.org) gallery.
 
-Uses the [Piwigo Web API](https://piwigo.org/doc/doku.php?id=dev:webapi:start) web service available on your Piwigo gallery using the login credentials you provide to display a randomly chosen photo on the screen. The random photo is chosen by the Piwigo API although it doesn't appear to be very random. It will scale the photo up to fit the display and slowly move it around the screen until the next random photo is retrieved.
+Uses the [Piwigo Web API](https://github.com/Piwigo/Piwigo/wiki/Piwigo-Web-API) web service available on your Piwigo gallery using the login credentials you provide to display a randomly chosen photo on the screen. The random photo is chosen by the Piwigo API although it doesn't appear to be very random. It will scale the photo up to fit the display and slowly move it around the screen until the next random photo is retrieved.
 
 Please note that this screen saver will download a photo from your Piwigo gallery every 30 seconds. Not only that, but it'll download the largest version of the photo that will fit on your screen. If you're on a metered Internet connection or are typically offline, then this screen saver may not be for you.
 
