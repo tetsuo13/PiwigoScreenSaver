@@ -103,7 +103,7 @@ public class PiwigoServiceTests
         Assert.Equal("guest", actual.Result.Status);
         Assert.Equal("modus", actual.Result.Theme);
         Assert.Equal("en_GB", actual.Result.Language);
-        Assert.Equal("a55282f9b21754bf3b31f478e68e42ff", actual.Result.Token);
+        Assert.Equal("37f81b30ae8043fd8cc008217f1a2f54", actual.Result.Token);
         Assert.Equal("utf-8", actual.Result.Charset);
         Assert.Equal(new DateTime(2019, 12, 15, 21, 34, 58), actual.Result.CurrentDateTime);
         Assert.Equal("2.10.1", actual.Result.Version);
