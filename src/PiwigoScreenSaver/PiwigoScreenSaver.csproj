@@ -7,8 +7,10 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
-    <Authors>Andrei Nicholson</Authors>
-    <AssemblyVersion>1.2.1</AssemblyVersion>
+    <Product>Piwigo Screen Saver</Product>
+    <Version>1.2.1</Version>
+    <Copyright>Copyright © 2023 Andrei Nicholson</Copyright>
+    <Company>https://github.com/tetsuo13/PiwigoScreenSaver</Company>
   </PropertyGroup>
 
   <ItemGroup>

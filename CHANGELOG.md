@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- .NET 7 ([#56](https://github.com/tetsuo13/PiwigoScreenSaver/pull/56))
+- .NET 7 and major refactoring ([#56](https://github.com/tetsuo13/PiwigoScreenSaver/pull/56), [#59](https://github.com/tetsuo13/PiwigoScreenSaver/pull/59))
 
 ## 1.2.1 (2020-06-02)
 
