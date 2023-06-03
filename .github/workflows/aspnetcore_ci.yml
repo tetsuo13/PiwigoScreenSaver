@@ -3,8 +3,7 @@ name: Continuous integration
 on:
   push:
     paths-ignore:
-    - '**.md'
-    - '**.ps1'
+      - '**.md'
 
 jobs:
   build_and_test:
@@ -15,9 +14,20 @@ jobs:
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
       DOTNET_NOLOGO: true
+      ARTIFACT_NAME: PiwigoScreenSaver-${{ github.ref_name }}.zip
+      PUBLISH_DIR: publish
+
     steps:
       - name: Clone repository
         uses: actions/checkout@v3
+
+      - name: Add build number to version string
+        run: |
+          $csproj = "src/PiwigoScreenSaver/PiwigoScreenSaver.csproj" | Resolve-Path
+          $xml = [xml](Get-Content $csproj)
+          $xml.Project.PropertyGroup.Version += ".${env:GITHUB_RUN_NUMBER}"
+          Write-Host "Setting assembly version to $($xml.Project.PropertyGroup.Version)"
+          $xml.Save($csproj)
 
       - name: Restore dependencies
         run: dotnet restore
@@ -27,3 +37,48 @@ jobs:
 
       - name: Unit tests
         run: dotnet test --no-build --configuration Release
+
+      - name: Create artifact
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        run: >
+          dotnet publish
+          --configuration Release
+          --runtime win-x64
+          --output ${{ env.PUBLISH_DIR }}
+          --no-restore
+          -property:PublishSingleFile=true
+          -property:DebugType=None
+          -property:DebugSymbols=false
+          --self-contained false
+          src/PiwigoScreenSaver/PiwigoScreenSaver.csproj
+
+      - name: Rename EXE to SCR
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        run: Rename-Item -Path ${{ env.PUBLISH_DIR }}/PiwigoScreenSaver.exe -NewName PiwigoScreenSaver.scr
+
+      - name: Zip artifact
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        run: Compress-Archive -Path ${{ env.PUBLISH_DIR }}/PiwigoScreenSaver.scr -DestinationPath ${{ env.ARTIFACT_NAME }}
+
+      - name: Upload artifact
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: artifact
+          path: ${{ env.ARTIFACT_NAME }}
+          retention-days: 1
+
+  release:
+    name: Create Release
+    needs: build_and_test
+    if: ${{ startsWith(github.ref, 'refs/tags/') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: 'artifact/*.zip'
+          name: PiwigoScreenSaver ${{ github.ref_name }}
