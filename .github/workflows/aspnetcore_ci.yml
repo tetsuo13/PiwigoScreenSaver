@@ -14,7 +14,8 @@ jobs:
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
       DOTNET_NOLOGO: true
-      ARTIFACT_NAME: PiwigoScreenSaver-${{ github.ref_name }}.zip
+      #ARTIFACT_NAME: PiwigoScreenSaver-${{ github.ref_name }}.zip
+      ARTIFACT_NAME: PiwigoScreenSaver-59-beta.zip
       PUBLISH_DIR: publish
 
     steps:
@@ -39,7 +40,7 @@ jobs:
         run: dotnet test --no-build --configuration Release
 
       - name: Create artifact
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        #if: ${{ startsWith(github.ref, 'refs/tags/') }}
         run: >
           dotnet publish
           --configuration Release
@@ -53,15 +54,15 @@ jobs:
           src/PiwigoScreenSaver/PiwigoScreenSaver.csproj
 
       - name: Rename EXE to SCR
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        #if: ${{ startsWith(github.ref, 'refs/tags/') }}
         run: Rename-Item -Path ${{ env.PUBLISH_DIR }}/PiwigoScreenSaver.exe -NewName PiwigoScreenSaver.scr
 
       - name: Zip artifact
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        #if: ${{ startsWith(github.ref, 'refs/tags/') }}
         run: Compress-Archive -Path ${{ env.PUBLISH_DIR }}/PiwigoScreenSaver.scr -DestinationPath ${{ env.ARTIFACT_NAME }}
 
       - name: Upload artifact
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        #if: ${{ startsWith(github.ref, 'refs/tags/') }}
         uses: actions/upload-artifact@v3
         with:
           name: artifact
@@ -71,7 +72,7 @@ jobs:
   release:
     name: Create Release
     needs: build_and_test
-    if: ${{ startsWith(github.ref, 'refs/tags/') }}
+    #if: ${{ startsWith(github.ref, 'refs/tags/') }}
     runs-on: ubuntu-latest
     steps:
       - name: Download artifact
