@@ -15,7 +15,7 @@ namespace PiwigoScreenSaver.Domain;
 
 public class PiwigoService : IGalleryService
 {
-    private string lastJsonResponse;
+    private string? lastJsonResponse;
 
     private readonly ILogger<PiwigoService> _logger;
     private readonly ISettingsService _settingsService;
@@ -156,7 +156,7 @@ public class PiwigoService : IGalleryService
     }
 
     private async Task<BaseResult<T>> MakeRequest<T>(string method, HttpMethod httpMethod,
-        IDictionary<string, string> formValues = null)
+        IDictionary<string, string>? formValues = null)
     {
         var uri = $"ws.php?format=json&method={method}";
         var httpClient = CreateClient();
@@ -175,7 +175,14 @@ public class PiwigoService : IGalleryService
             response.EnsureSuccessStatusCode();
             lastJsonResponse = await response.Content.ReadAsStringAsync();
 
-            return MapJson<T>(lastJsonResponse);
+            var result = MapJson<T>(lastJsonResponse);
+
+            if (result == null)
+            {
+                throw new InvalidCastException($"Unexpected response couldn't be mapped: {lastJsonResponse}");
+            }
+
+            return result;
         }
         catch (Exception e)
         {
@@ -185,6 +192,6 @@ public class PiwigoService : IGalleryService
         }
     }
 
-    internal BaseResult<T> MapJson<T>(string json) =>
+    internal BaseResult<T>? MapJson<T>(string json) =>
         JsonSerializer.Deserialize<BaseResult<T>>(json, _jsonOptions);
 }

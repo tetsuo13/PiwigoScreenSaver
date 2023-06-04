@@ -14,7 +14,7 @@ public class RegistryRepository : ISettingsRepository
 {
     private const string HkcuPath = @"Software\PiwigoScreenSaver";
 
-    public string GetValue(string name)
+    public string? GetValue(string name)
     {
         using var key = Registry.CurrentUser.OpenSubKey(HkcuPath);
 

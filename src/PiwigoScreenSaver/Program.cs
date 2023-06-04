@@ -11,7 +11,7 @@ namespace PiwigoScreenSaver;
 
 public static class Program
 {
-    private static ILogger logger;
+    private static ILogger logger = new Logger();
 
     /// <summary>
     /// The main entry point for the application.
@@ -29,8 +29,6 @@ public static class Program
         Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
         Application.ThreadException += Application_ThreadException;
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-
-        logger = new Logger();
 
         var launcher = host.Services.GetRequiredService<LaunchManager>();
         launcher.LaunchForm(args);

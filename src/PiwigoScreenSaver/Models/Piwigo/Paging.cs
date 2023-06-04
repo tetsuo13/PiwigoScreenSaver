@@ -12,5 +12,5 @@ public record Paging
     public int Count { get; init; }
 
     [JsonPropertyName("total_count")]
-    public string TotalCount { get; init; }
+    public string TotalCount { get; init; } = default!;
 }

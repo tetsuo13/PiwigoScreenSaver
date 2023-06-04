@@ -5,7 +5,7 @@ namespace PiwigoScreenSaver.Models.Piwigo;
 
 public record Derivative
 {
-    public string Url { get; init; }
+    public string Url { get; init; } = default!;
 
     [JsonConverter(typeof(NumberDuckTypeConverter))]
     public int Width { get; init; }

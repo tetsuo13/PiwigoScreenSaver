@@ -39,7 +39,7 @@ public class ModeManager
         }
 
         var firstArgument = args[0].ToLower().Trim();
-        string secondArgument = null;
+        string? secondArgument = null;
 
         // Handle cases where arguments are separated by colon.
         // Examples: /c:1234567 or /P:1234567

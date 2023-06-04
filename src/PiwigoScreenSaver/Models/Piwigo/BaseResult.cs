@@ -11,7 +11,7 @@ public record BaseResult<T>
     public int? ErrorCode { get; init; }
 
     [JsonPropertyName("message")]
-    public string ErrorMessage { get; init; }
+    public string ErrorMessage { get; init; } = default!;
 
-    public T Result { get; init; }
+    public T Result { get; init; } = default!;
 }

@@ -7,9 +7,9 @@ namespace PiwigoScreenSaver.Presenters;
 
 public class SettingsFormPresenter : ISettingsFormPresenter
 {
-    public string Url { get; set; }
-    public string Username { get; set; }
-    public string Password { get; set; }
+    public string Url { get; set; } = default!;
+    public string Username { get; set; } = default!;
+    public string Password { get; set; } = default!;
 
     private readonly ILogger<SettingsFormPresenter> _logger;
     private readonly ISettingsService _settingsService;
