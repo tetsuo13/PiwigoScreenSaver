@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
-using Moq;
+using NSubstitute;
+using NSubstitute.ReturnsExtensions;
 using PiwigoScreenSaver.Domain;
 using PiwigoScreenSaver.Models;
 using Xunit;
@@ -11,13 +12,13 @@ public class SettingsServiceTests
     [Fact]
     public void Get_NotInCache_NotInRepository_ThrowsException()
     {
-        var cacheService = new Mock<IMemoryCache>();
-        cacheService.Setup(x => x.TryGetValue(It.IsAny<object>(), out It.Ref<object>.IsAny!)).Returns(false);
+        var cacheService = Substitute.For<IMemoryCache>();
+        cacheService.TryGetValue(Arg.Any<object>(), out Arg.Any<object?>()).Returns(false);
 
-        var settingsRepository = new Mock<ISettingsRepository>();
-        settingsRepository.Setup(x => x.GetValue(It.IsAny<string>())).Returns<string>(null);
+        var settingsRepository = Substitute.For<ISettingsRepository>();
+        settingsRepository.GetValue(Arg.Any<string>()).ReturnsNull();
 
-        var settingsService = new SettingsService(cacheService.Object, settingsRepository.Object);
+        var settingsService = new SettingsService(cacheService, settingsRepository);
 
         Assert.Throws<FormatException>(() => settingsService.Get(SettingKey.Url));
     }
@@ -34,9 +35,9 @@ public class SettingsServiceTests
     [InlineData(" ", "jdoe", "monkey")]
     public void Validation_NullOrWhiteSpace_ShouldFail(string url, string username, string password)
     {
-        var cacheService = new Mock<IMemoryCache>();
-        var settingsRepository = new Mock<ISettingsRepository>();
-        var settingsService = new SettingsService(cacheService.Object, settingsRepository.Object);
+        var cacheService = Substitute.For<IMemoryCache>();
+        var settingsRepository = Substitute.For<ISettingsRepository>();
+        var settingsService = new SettingsService(cacheService, settingsRepository);
 
         Assert.False(settingsService.ValidateSettings(url, username, password));
     }
@@ -46,9 +47,9 @@ public class SettingsServiceTests
     [InlineData("https://www.example.com/", true)]
     public void Validation_Urls(string url, bool expected)
     {
-        var cacheService = new Mock<IMemoryCache>();
-        var settingsRepository = new Mock<ISettingsRepository>();
-        var settingsService = new SettingsService(cacheService.Object, settingsRepository.Object);
+        var cacheService = Substitute.For<IMemoryCache>();
+        var settingsRepository = Substitute.For<ISettingsRepository>();
+        var settingsService = new SettingsService(cacheService, settingsRepository);
 
         Assert.Equal(expected, settingsService.ValidateSettings(url, "jdoe", "monkey"));
     }

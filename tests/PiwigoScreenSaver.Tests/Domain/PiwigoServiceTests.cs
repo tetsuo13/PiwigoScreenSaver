@@ -1,11 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
-using Moq;
-using Moq.Protected;
+using NSubstitute;
 using PiwigoScreenSaver.Domain;
 using PiwigoScreenSaver.Models;
 using PiwigoScreenSaver.Models.Piwigo;
 using System.Drawing;
-using System.Net;
 using Xunit;
 
 namespace PiwigoScreenSaver.Tests.Domain;
@@ -31,9 +29,9 @@ public class PiwigoServiceTests
         var json = """
             {"stat":"ok","result":{"username":"guest","status":"guest","theme":"modus","language":"en_GB","pwg_token":"37f81b30ae8043fd8cc008217f1a2f54","charset":"utf-8","current_datetime":"2019-12-15 21:34:58","version":"2.10.1","available_sizes":["square","thumb","2small","xsmall","small","medium","large","xlarge","xxlarge"]}}
             """;
-        var httpClientFactory = CreateMockHttpClientFactory(HttpStatusCode.OK, json);        
-        var logger = new Mock<ILogger<PiwigoService>>();
-        var piwigoService = new PiwigoService(logger.Object, CreateMockSettingsService(), httpClientFactory);
+        var httpClientFactory = CreateMockHttpClientFactory(json);        
+        var logger = Substitute.For<ILogger<PiwigoService>>();
+        var piwigoService = new PiwigoService(logger, CreateMockSettingsService(), httpClientFactory);
 
         var actual = await piwigoService.NotAuthenticated();
 
@@ -46,9 +44,9 @@ public class PiwigoServiceTests
         var json = """
             {"stat":"ok","result":{"username":"jdoe","status":"generic","theme":"modus","language":"en_GB","pwg_token":"37f81b30ae8043fd8cc008217f1a2f54","charset":"utf-8","current_datetime":"2019-12-15 21:34:58","version":"2.10.1","available_sizes":["square","thumb","2small","xsmall","small","medium","large","xlarge","xxlarge"]}}
             """;
-        var httpClientFactory = CreateMockHttpClientFactory(HttpStatusCode.OK, json);
-        var logger = new Mock<ILogger<PiwigoService>>();
-        var piwigoService = new PiwigoService(logger.Object, CreateMockSettingsService(), httpClientFactory);
+        var httpClientFactory = CreateMockHttpClientFactory(json);
+        var logger = Substitute.For<ILogger<PiwigoService>>();
+        var piwigoService = new PiwigoService(logger, CreateMockSettingsService(), httpClientFactory);
 
         var actual = await piwigoService.NotAuthenticated();
 
@@ -61,9 +59,9 @@ public class PiwigoServiceTests
         var json = """
             {"stat":"fail","err":999,"message":"Invalid username/password"}
             """;
-        var httpClientFactory = CreateMockHttpClientFactory(HttpStatusCode.OK, json);
-        var logger = new Mock<ILogger<PiwigoService>>();
-        var piwigoService = new PiwigoService(logger.Object, CreateMockSettingsService(), httpClientFactory);
+        var httpClientFactory = CreateMockHttpClientFactory(json);
+        var logger = Substitute.For<ILogger<PiwigoService>>();
+        var piwigoService = new PiwigoService(logger, CreateMockSettingsService(), httpClientFactory);
 
         await Assert.ThrowsAsync<InvalidOperationException>(piwigoService.Authenticate);
     }
@@ -74,9 +72,9 @@ public class PiwigoServiceTests
         var json = """
             {"stat":"ok","result":true}
             """;
-        var httpClientFactory = CreateMockHttpClientFactory(HttpStatusCode.OK, json);
-        var logger = new Mock<ILogger<PiwigoService>>();
-        var piwigoService = new PiwigoService(logger.Object, CreateMockSettingsService(), httpClientFactory);
+        var httpClientFactory = CreateMockHttpClientFactory(json);
+        var logger = Substitute.For<ILogger<PiwigoService>>();
+        var piwigoService = new PiwigoService(logger, CreateMockSettingsService(), httpClientFactory);
 
         var exception = await Record.ExceptionAsync(piwigoService.Authenticate);
 
@@ -89,9 +87,9 @@ public class PiwigoServiceTests
         var json = """
             {"stat":"ok","result":{"username":"guest","status":"guest","theme":"modus","language":"en_GB","pwg_token":"37f81b30ae8043fd8cc008217f1a2f54","charset":"utf-8","current_datetime":"2019-12-15 21:34:58","version":"2.10.1","available_sizes":["square","thumb","2small","xsmall","small","medium","large","xlarge","xxlarge"]}}
             """;
-        var logger = new Mock<ILogger<PiwigoService>>();
-        var httpClientFactory = CreateMockHttpClientFactory(HttpStatusCode.OK, json);
-        var piwigoService = new PiwigoService(logger.Object, CreateMockSettingsService(), httpClientFactory);
+        var logger = Substitute.For<ILogger<PiwigoService>>();
+        var httpClientFactory = CreateMockHttpClientFactory(json);
+        var piwigoService = new PiwigoService(logger, CreateMockSettingsService(), httpClientFactory);
         var actual = piwigoService.MapJson<SessionStatus>(json);
 
         Assert.NotNull(actual);
@@ -117,9 +115,9 @@ public class PiwigoServiceTests
         var json = """
             {"stat":"fail","err":501,"message":"Method name is not valid"}
             """;
-        var logger = new Mock<ILogger<PiwigoService>>();
-        var httpClientFactory = CreateMockHttpClientFactory(HttpStatusCode.OK, json);
-        var piwigoService = new PiwigoService(logger.Object, CreateMockSettingsService(), httpClientFactory);
+        var logger = Substitute.For<ILogger<PiwigoService>>();
+        var httpClientFactory = CreateMockHttpClientFactory(json);
+        var piwigoService = new PiwigoService(logger, CreateMockSettingsService(), httpClientFactory);
         var actual = piwigoService.MapJson<SessionStatus>(json);
 
         Assert.NotNull(actual);
@@ -135,9 +133,9 @@ public class PiwigoServiceTests
         var json = """
             {"stat":"ok","result":{"paging":{"page":0,"per_page":1,"count":1,"total_count":"976"},"images":[{"id":9578,"width":2592,"height":1944,"hit":0,"file":"20180218_113956.jpg","name":"20180218 113956","comment":null,"date_creation":"2018-02-18 11:39:56","date_available":"2018-11-29 21:49:54","page_url":"https:\/\/example.com\/picture.php?\/8178","element_url":"https:\/\/example.com\/upload\/2018\/11\/29\/20181129214954-8ce196fc.jpg","derivatives":{"square":{"url":"https:\/\/example.com\/_data\/i\/upload\/2018\/11\/29\/20181129214954-8ce196fc-sq.jpg","width":120,"height":120},"thumb":{"url":"https:\/\/example.com\/_data\/i\/upload\/2018\/11\/29\/20181129214954-8ce196fc-th.jpg","width":144,"height":108},"2small":{"url":"https:\/\/example.com\/i.php?\/upload\/2018\/11\/29\/20181129214954-8ce196fc-2s.jpg","width":240,"height":180},"xsmall":{"url":"https:\/\/example.com\/_data\/i\/upload\/2018\/11\/29\/20181129214954-8ce196fc-xs.jpg","width":432,"height":324},"small":{"url":"https:\/\/example.com\/i.php?\/upload\/2018\/11\/29\/20181129214954-8ce196fc-sm.jpg","width":576,"height":432},"medium":{"url":"https:\/\/example.com\/i.php?\/upload\/2018\/11\/29\/20181129214954-8ce196fc-me.jpg","width":792,"height":594},"large":{"url":"https:\/\/example.com\/i.php?\/upload\/2018\/11\/29\/20181129214954-8ce196fc-la.jpg","width":1008,"height":756},"xlarge":{"url":"https:\/\/example.com\/i.php?\/upload\/2018\/11\/29\/20181129214954-8ce196fc-xl.jpg","width":1224,"height":918},"xxlarge":{"url":"https:\/\/example.com\/i.php?\/upload\/2018\/11\/29\/20181129214954-8ce196fc-xx.jpg","width":1656,"height":1242}},"categories":[{"id":38,"url":"https:\/\/example.com\/index.php?\/category\/38","page_url":"https:\/\/example.com\/picture.php?\/8178\/category\/38"}]}]}}
             """;
-        var logger = new Mock<ILogger<PiwigoService>>();
-        var httpClientFactory = CreateMockHttpClientFactory(HttpStatusCode.OK, json);
-        var piwigoService = new PiwigoService(logger.Object, CreateMockSettingsService(), httpClientFactory);
+        var logger = Substitute.For<ILogger<PiwigoService>>();
+        var httpClientFactory = CreateMockHttpClientFactory(json);
+        var piwigoService = new PiwigoService(logger, CreateMockSettingsService(), httpClientFactory);
         var actual = piwigoService.MapJson<CategoryImages>(json);
 
         Assert.NotNull(actual);
@@ -162,9 +160,9 @@ public class PiwigoServiceTests
         var json = """
             {"stat":"ok","result":{"paging":{"page":0,"per_page":1,"count":1,"total_count":"976"},"images":[{"id":8587,"width":389,"height":800,"hit":0,"file":"1568733725341_photo.jpg","name":"1568733725341 photo","comment":null,"date_creation":"2019-09-17 11:21:00","date_available":"2019-09-23 20:57:32","page_url":"https:\/\/example.com\/picture.php?\/8587","element_url":"https:\/\/example.com\/upload\/2019\/09\/23\/20190923205732-d3f0e81a.jpg","derivatives":{"square":{"url":"https:\/\/example.com\/_data\/i\/upload\/2019\/09\/23\/20190923205732-d3f0e81a-sq.jpg","width":120,"height":120},"thumb":{"url":"https:\/\/example.com\/_data\/i\/upload\/2019\/09\/23\/20190923205732-d3f0e81a-th.jpg","width":70,"height":144},"2small":{"url":"https:\/\/example.com\/_data\/i\/upload\/2019\/09\/23\/20190923205732-d3f0e81a-2s.jpg","width":116,"height":240},"xsmall":{"url":"https:\/\/example.com\/_data\/i\/upload\/2019\/09\/23\/20190923205732-d3f0e81a-xs.jpg","width":157,"height":324},"small":{"url":"https:\/\/example.com\/i.php?\/upload\/2019\/09\/23\/20190923205732-d3f0e81a-sm.jpg","width":210,"height":432},"medium":{"url":"https:\/\/example.com\/i.php?\/upload\/2019\/09\/23\/20190923205732-d3f0e81a-me.jpg","width":288,"height":594},"large":{"url":"https:\/\/example.com\/i.php?\/upload\/2019\/09\/23\/20190923205732-d3f0e81a-la.jpg","width":367,"height":756},"xlarge":{"url":"https:\/\/example.com\/upload\/2019\/09\/23\/20190923205732-d3f0e81a.jpg","width":"389","height":"800"},"xxlarge":{"url":"https:\/\/example.com\/upload\/2019\/09\/23\/20190923205732-d3f0e81a.jpg","width":"389","height":"800"}},"categories":[{"id":38,"url":"https:\/\/example.com\/index.php?\/category\/38","page_url":"https:\/\/example.com\/picture.php?\/8587\/category\/38"}]}]}}
             """;
-        var logger = new Mock<ILogger<PiwigoService>>();
-        var httpClientFactory = CreateMockHttpClientFactory(HttpStatusCode.OK, json);
-        var piwigoService = new PiwigoService(logger.Object, CreateMockSettingsService(), httpClientFactory);
+        var logger = Substitute.For<ILogger<PiwigoService>>();
+        var httpClientFactory = CreateMockHttpClientFactory(json);
+        var piwigoService = new PiwigoService(logger, CreateMockSettingsService(), httpClientFactory);
         var actual = piwigoService.MapJson<CategoryImages>(json);
 
         Assert.NotNull(actual);
@@ -189,9 +187,9 @@ public class PiwigoServiceTests
         var json = """
             {"stat":"ok","result":{"paging":{"page":0,"per_page":1,"count":0,"total_count":"0"},"images":[]}}
             """;
-        var logger = new Mock<ILogger<PiwigoService>>();
-        var httpClientFactory = CreateMockHttpClientFactory(HttpStatusCode.OK, json);
-        var piwigoService = new PiwigoService(logger.Object, CreateMockSettingsService(), httpClientFactory);
+        var logger = Substitute.For<ILogger<PiwigoService>>();
+        var httpClientFactory = CreateMockHttpClientFactory(json);
+        var piwigoService = new PiwigoService(logger, CreateMockSettingsService(), httpClientFactory);
         var actual = piwigoService.MapJson<CategoryImages>(json);
 
         Assert.NotNull(actual);
@@ -211,9 +209,9 @@ public class PiwigoServiceTests
     [InlineData(1000, 700, "medium")]
     public void FindLargestImageWithinBounds(int boundingWidth, int boundingHeight, string expectedSize)
     {
-        var logger = new Mock<ILogger<PiwigoService>>();
-        var httpClientFactory = CreateMockHttpClientFactory(HttpStatusCode.OK, string.Empty);
-        var piwigoService = new PiwigoService(logger.Object, CreateMockSettingsService(), httpClientFactory);
+        var logger = Substitute.For<ILogger<PiwigoService>>();
+        var httpClientFactory = CreateMockHttpClientFactory(string.Empty);
+        var piwigoService = new PiwigoService(logger, CreateMockSettingsService(), httpClientFactory);
         var boundingSize = new Size(boundingWidth, boundingHeight);
 
         var actual = piwigoService.FindLargestImageWithinBounds(derivatives, boundingSize);
@@ -224,9 +222,9 @@ public class PiwigoServiceTests
     [Fact]
     public void FindLargestImageWithinBounds_NoneFound_ThrowsException()
     {
-        var logger = new Mock<ILogger<PiwigoService>>();
-        var httpClientFactory = CreateMockHttpClientFactory(HttpStatusCode.OK, string.Empty);
-        var piwigoService = new PiwigoService(logger.Object, CreateMockSettingsService(), httpClientFactory);
+        var logger = Substitute.For<ILogger<PiwigoService>>();
+        var httpClientFactory = CreateMockHttpClientFactory(string.Empty);
+        var piwigoService = new PiwigoService(logger, CreateMockSettingsService(), httpClientFactory);
 
         Assert.Throws<InvalidOperationException>(() => piwigoService.FindLargestImageWithinBounds(derivatives, new Size(42, 42)));
     }
@@ -235,42 +233,30 @@ public class PiwigoServiceTests
     public async Task ImageStreamFromUrl_ThrowsException_ContainsPhotoNameInMessage()
     {
         const string imageName = "Rockabye, Sheriff, just you relax.gif";
-        var httpClientFactory = CreateMockHttpClientFactory(HttpStatusCode.OK, string.Empty);
-        var logger = new Mock<ILogger<PiwigoService>>();
+        var httpClientFactory = CreateMockHttpClientFactory(string.Empty);
+        var logger = Substitute.For<ILogger<PiwigoService>>();
 
-        var piwigoService = new PiwigoService(logger.Object, CreateMockSettingsService(), httpClientFactory);
+        var piwigoService = new PiwigoService(logger, CreateMockSettingsService(), httpClientFactory);
 
         var e = await Assert.ThrowsAsync<InvalidOperationException>(async () => await piwigoService.ImageStreamFromUrl(string.Empty, imageName));
         Assert.Contains(imageName, e.Message);
     }
 
-    private static IHttpClientFactory CreateMockHttpClientFactory(HttpStatusCode statusCode, string json)
+    private static IHttpClientFactory CreateMockHttpClientFactory(string responseMessage)
     {
-        var messageHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
-        messageHandler
-            .Protected()
-            .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(new HttpResponseMessage
-            {
-                StatusCode = statusCode,
-                Content = new StringContent(json)
-            });
+        var httpMessageHandler = new MockHttpMessageHandler(responseMessage);
+        var httpClient = new HttpClient(httpMessageHandler);
 
-        var httpClient = new HttpClient(messageHandler.Object)
-        {
-            BaseAddress = new Uri("https://www.example.com/")
-        };
+        var httpClientFactory = Substitute.For<IHttpClientFactory>();
+        httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
 
-        var httpClientFactory = new Mock<IHttpClientFactory>();
-        httpClientFactory.Setup(x => x.CreateClient(It.IsAny<string>())).Returns(httpClient);
-
-        return httpClientFactory.Object;
+        return httpClientFactory;
     }
 
     private static ISettingsService CreateMockSettingsService()
     {
-        var service = new Mock<ISettingsService>();
-        service.Setup(x => x.Get(It.IsAny<SettingKey>())).Returns("https://www.example.com/");
-        return service.Object;
+        var service = Substitute.For<ISettingsService>();
+        service.Get(Arg.Any<SettingKey>()).Returns("https://www.example.com/");
+        return service;
     }
 }
