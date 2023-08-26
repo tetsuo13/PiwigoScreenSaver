@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using Moq;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using PiwigoScreenSaver.Domain;
 using PiwigoScreenSaver.Presenters;
 using System.Drawing;
@@ -25,9 +26,9 @@ public class MainFormPresenterTests
     [MemberData(nameof(SignificantMouseMovementData))]
     public void SignificantMouseMovement(Point initialPosition, Point currentPosition, bool expected)
     {
-        var logger = new Mock<ILogger<MainFormPresenter>>();
-        var galleryService = new Mock<IGalleryService>();
-        var presenter = new MainFormPresenter(logger.Object, galleryService.Object, MockBoundaries);
+        var logger = Substitute.For<ILogger<MainFormPresenter>>();
+        var galleryService = Substitute.For<IGalleryService>();
+        var presenter = new MainFormPresenter(logger, galleryService, MockBoundaries);
 
         Assert.Equal(expected, presenter.SignificantMouseMovement(initialPosition, currentPosition));
     }
@@ -39,9 +40,9 @@ public class MainFormPresenterTests
         {
             new Rectangle(0, 0, 3840, 2160)
         };
-        var logger = new Mock<ILogger<MainFormPresenter>>();
-        var galleryService = new Mock<IGalleryService>();
-        var presenter = new MainFormPresenter(logger.Object, galleryService.Object, boundaries);
+        var logger = Substitute.For<ILogger<MainFormPresenter>>();
+        var galleryService = Substitute.For<IGalleryService>();
+        var presenter = new MainFormPresenter(logger, galleryService, boundaries);
 
         Assert.Equal(0, presenter.BoundingRectangle.X);
         Assert.Equal(0, presenter.BoundingRectangle.Y);
@@ -52,10 +53,10 @@ public class MainFormPresenterTests
     [Fact]
     public async Task GetImageFromGallery_GalleryThrowsException_IndicatesError()
     {
-        var logger = new Mock<ILogger<MainFormPresenter>>();
-        var galleryService = new Mock<IGalleryService>();
-        galleryService.Setup(x => x.GetRandomImage(It.IsAny<Size>())).Throws<Exception>();
-        var presenter = new MainFormPresenter(logger.Object, galleryService.Object, MockBoundaries);
+        var logger = Substitute.For<ILogger<MainFormPresenter>>();
+        var galleryService = Substitute.For<IGalleryService>();
+        galleryService.GetRandomImage(Arg.Any<Size>()).Throws<Exception>();
+        var presenter = new MainFormPresenter(logger, galleryService, MockBoundaries);
 
         var actual = await presenter.GetImageFromGallery(new Size(320, 240));
 
@@ -67,9 +68,9 @@ public class MainFormPresenterTests
     [Fact]
     public async Task GetImageFromGallery_GalleryDoesntThrowException_IndicatesSuccess()
     {
-        var logger = new Mock<ILogger<MainFormPresenter>>();
-        var galleryService = new Mock<IGalleryService>();
-        var presenter = new MainFormPresenter(logger.Object, galleryService.Object, MockBoundaries);
+        var logger = Substitute.For<ILogger<MainFormPresenter>>();
+        var galleryService = Substitute.For<IGalleryService>();
+        var presenter = new MainFormPresenter(logger, galleryService, MockBoundaries);
 
         var actual = await presenter.GetImageFromGallery(new Size(320, 240));
 
