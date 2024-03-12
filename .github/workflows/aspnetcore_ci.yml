@@ -78,7 +78,7 @@ jobs:
         uses: actions/download-artifact@v4
 
       - name: Create GitHub release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: 'artifact/*.zip'
           name: PiwigoScreenSaver ${{ github.ref_name }}
